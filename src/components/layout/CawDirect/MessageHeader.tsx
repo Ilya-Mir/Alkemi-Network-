@@ -46,12 +46,22 @@ export const MessageHeader = () => {
     }
 
     useEffect(() => {
-        setInterval(() => {
-            if (profileHash !== load("access_token")) {
-                setProfileHash(load("access_token"))
-            }
-        }, 900)
-    }, [])
+        const intervalId = window.setInterval(() => {
+            const nextProfileHash = load("access_token") || "";
+
+            setProfileHash((currentProfileHash) => {
+                if (currentProfileHash !== nextProfileHash) {
+                    return nextProfileHash;
+                }
+
+                return currentProfileHash;
+            });
+        }, 900);
+
+        return () => {
+            window.clearInterval(intervalId);
+        };
+    }, []);
 
     return (
         <Box sx={{mb: "21px"}} display={"flex"}>
